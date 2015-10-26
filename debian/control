@@ -1,0 +1,33 @@
+Source: mcrouter
+Maintainer: Ricky Ramirez <rram@reddit.com>
+Section: net
+Priority: optional
+Standards-Version: 3.9.5
+Build-Depends: debhelper (>= 9),
+ automake,
+ dh-autoreconf,
+ gcc-4.8,
+ g++-4.8,
+ libboost-context1.54-dev,
+ libboost-filesystem1.54-dev,
+ libboost-regex1.54-dev,
+ libboost-system1.54-dev,
+ libcap-dev,
+ libdouble-conversion-dev,
+ libevent-dev,
+ libfolly-dev,
+ libgflags-dev,
+ libgoogle-glog-dev,
+ libgtest-dev,
+ libpython2.7-stdlib,
+ libssl-dev,
+ pkg-config,
+ python-minimal,
+ ragel
+
+Package: mcrouter
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Suggests: memcached, libmemcached
+Description: Memcache protocol router for scaling Memcached deployments.
+ https://github.com/facebook/mcrouter

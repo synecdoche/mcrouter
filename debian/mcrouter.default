@@ -1,0 +1,1 @@
+MCROUTER_FLAGS="-f /etc/mcrouter.conf -L /var/log/mcrouter/mcrouter.log -p 11212"

@@ -1,0 +1,23 @@
+mcrouter (0.10.0-0reddit1) trusty; urgency=medium
+
+  * New upstream release.
+
+ -- Ricky Ramirez <rram@reddit.com>  Mon, 26 Oct 2015 14:05:26 -0700
+
+mcrouter (0.6.0-0reddit1) trusty; urgency=medium
+
+  * New upstream release.
+
+ -- Ricky Ramirez <rram@reddit.com>  Wed, 26 Aug 2015 13:47:52 -0700
+
+mcrouter (0.1.0-0reddit2) precise; urgency=low
+
+  * Add patch for allowing whitespace at the end of commands.
+
+ -- Ricky Ramirez <rram@reddit.com>  Wed, 13 Aug 2014 08:47:13 -0700
+
+mcrouter (0.1.0-0reddit1) precise; urgency=low
+
+  * Initial release. (Git commit bf2c1cf806b89a8f8604a8f876cbe2f4b03ece17)
+
+ -- Ricky Ramirez <rram@reddit.com>  Wed, 06 Aug 2014 17:41:53 -0700
