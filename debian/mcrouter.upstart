@@ -11,6 +11,16 @@ umask 022
 setuid Debian-mcrouter
 setgid Debian-mcrouter
 
+pre-start script
+  if [ -f '/etc/default/mcrouter' ]; then
+    . /etc/default/mcrouter
+  fi
+  if [ -z "$ENABLED" ]; then
+    echo "mcrouter is disabled. Modify /etc/default/mcrouter to enable."
+    exit 1
+  fi
+end script
+
 script
   if [ -f '/etc/default/mcrouter' ]; then
     . /etc/default/mcrouter
