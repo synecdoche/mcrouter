@@ -1,3 +1,10 @@
+mcrouter (0.10.0-0reddit2) trusty; urgency=medium
+
+  * Don't autostart unless configured.
+  * Add README.Debian with build instructions.
+
+ -- Ricky Ramirez <rram@reddit.com>  Tue, 22 Dec 2015 15:44:35 -0800
+
 mcrouter (0.10.0-0reddit1) trusty; urgency=medium
 
   * New upstream release.
