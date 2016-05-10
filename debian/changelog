@@ -1,3 +1,10 @@
+mcrouter (0.22.0-0reddit1) trusty; urgency=medium
+
+  * New upstream release.
+  * Link statically against libthriftprotocol and libfolly.
+
+ -- Ricky Ramirez <vagrant@reddit.local>  Tue, 10 May 2016 19:24:23 +0000
+
 mcrouter (0.10.0-0reddit2) trusty; urgency=medium
 
   * Don't autostart unless configured.
