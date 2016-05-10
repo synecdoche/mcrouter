@@ -1,3 +1,9 @@
+mcrouter (0.22.0-0reddit1ubuntu6) trusty; urgency=medium
+
+  * Make debian/rules make buildall.sh executable.
+
+ -- Ricky Ramirez <vagrant@reddit.local>  Tue, 10 May 2016 20:42:34 +0000
+
 mcrouter (0.22.0-0reddit1ubuntu5) trusty; urgency=medium
 
   * Refresh patches.
