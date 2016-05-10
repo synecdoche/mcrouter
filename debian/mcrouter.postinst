@@ -13,6 +13,7 @@ case "$1" in
     install -d -oDebian-mcrouter -gadm -m2750 /var/log/mcrouter
     install -d -oDebian-mcrouter -gDebian-mcrouter -m750 /var/spool/mcrouter
     install -d -oDebian-mcrouter -gDebian-mcrouter -m750 /var/mcrouter/stats
+    install -d -oDebian-mcrouter -gDebian-mcrouter -m750 /var/mcrouter/fifos
     ;;
 esac
 

@@ -1,0 +1,35 @@
+From: john spurling <john.spurling@reddit.com>
+Date: Tue, 10 May 2016 19:32:41 +0000
+Subject: Change mcrouter/configure.ac to link statically against libfolly and
+ libthriftprotocol
+
+---
+ mcrouter/configure.ac | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/mcrouter/configure.ac b/mcrouter/configure.ac
+index fd9a384..427f8a4 100644
+--- a/mcrouter/configure.ac
++++ b/mcrouter/configure.ac
+@@ -120,8 +120,6 @@ AC_CHECK_LIB([ssl], [SSL_library_init], [], [AC_MSG_ERROR([Unable to find ssl])]
+ AC_CHECK_LIB([z], [gzread], [], [AC_MSG_ERROR([Unable to find zlib])])
+ AC_CHECK_LIB([double-conversion],[ceil],[],[AC_MSG_ERROR(
+              [Please install double-conversion library])])
+-AC_CHECK_LIB([folly],[getenv],[],[AC_MSG_ERROR(
+-             [Please install the folly library])])
+ AC_CHECK_HEADER([folly/Likely.h], [], [AC_MSG_ERROR(
+ [Couldn't find folly, please download from https://github.com/facebook/folly]
+ )], [])
+@@ -159,9 +157,10 @@ AC_CHECK_FUNCS([gettimeofday \
+                 dup2 \
+                 ftruncate])
+ 
+-LIBS="$LIBS $BOOST_LDFLAGS $BOOST_CONTEXT_LIB $BOOST_FILESYSTEM_LIB \
++STATIC_LIBS="-Wl,--whole-archive  $STATIC_LIB_DIR/libfolly.a $STATIC_LIB_DIR/libthriftprotocol.a  -Wl,--no-whole-archive"
++LIBS="$STATIC_LIBS $LIBS $BOOST_LDFLAGS $BOOST_CONTEXT_LIB $BOOST_FILESYSTEM_LIB \
+       $BOOST_PROGRAM_OPTIONS_LIB $BOOST_SYSTEM_LIB $BOOST_REGEX_LIB \
+-      -lpthread -pthread -lthriftprotocol"
++      -lpthread -liberty"
+ 
+ AM_PATH_PYTHON([2.6],, [:])
+ AM_CONDITIONAL([HAVE_PYTHON], [test "$PYTHON" != :])

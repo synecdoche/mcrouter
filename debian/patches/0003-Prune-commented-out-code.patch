@@ -1,0 +1,51 @@
+From: john spurling <john.spurling@reddit.com>
+Date: Tue, 5 Jul 2016 00:52:48 +0000
+Subject: Prune commented out code
+
+---
+ buildall.sh | 25 -------------------------
+ 1 file changed, 25 deletions(-)
+
+diff --git a/buildall.sh b/buildall.sh
+index 528e265..e52e4da 100755
+--- a/buildall.sh
++++ b/buildall.sh
+@@ -27,19 +27,6 @@ if [[ ! -d folly ]]; then
+     die "folly source dir missing"
+ fi
+ 
+-# clone folly into $PKG_DIR
+-# if [[ ! -d folly ]]; then
+-#   git clone https://github.com/facebook/folly
+-#   cd "$PKG_DIR/folly" || die "cd fail"
+-#   if [[ -f "$REPO_BASE_DIR/mcrouter/FOLLY_COMMIT" ]]; then
+-#     FOLLY_COMMIT="$(head -n 1 "$REPO_BASE_DIR/mcrouter/FOLLY_COMMIT")"
+-#     echo "FOLLY_COMMIT file found: using folly commit $FOLLY_COMMIT"
+-#     git checkout "$FOLLY_COMMIT"
+-#   else
+-#     echo "No FOLLY_COMMIT file, using folly HEAD=$(git rev-parse HEAD)"
+-#   fi
+-# fi
+-
+ # build folly if no libfolly.a
+ if [[ ! -f $INSTALL_DIR/lib/libfolly.a ]]; then
+     cd "$PKG_DIR/folly/folly" || die "cd $PKG_DIR/folly/folly failed"
+@@ -72,18 +59,6 @@ if [[ ! -d "$PKG_DIR/fbthrift" ]]; then
+     die "missing fbthrift source dir"
+ fi
+ 
+-# if [[ ! -d "$PKG_DIR/fbthrift" ]]; then
+-#   git clone https://github.com/facebook/fbthrift
+-#   cd "$PKG_DIR/fbthrift" || die "cd fail"
+-#   if [[ -f "$REPO_BASE_DIR/mcrouter/FBTHRIFT_COMMIT" ]]; then
+-#     FBTHRIFT_COMMIT="$(head -n 1 "$REPO_BASE_DIR/mcrouter/FBTHRIFT_COMMIT")"
+-#     echo "FBTHRIFT_COMMIT file found: using fbthrift commit $FBTHRIFT_COMMIT"
+-#     git checkout "$FBTHRIFT_COMMIT"
+-#   else
+-#     echo "No FBTHRIFT_COMMIT file, using fbthrift HEAD=$(git rev-parse HEAD)"
+-#   fi
+-# fi
+-
+ cd "$PKG_DIR/fbthrift/thrift" || die "cd fbthrift failed"
+ 
+ if [[ ! -f "$INSTALL_DIR/lib/libthriftprotocol.a" ]]; then

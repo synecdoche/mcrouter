@@ -1,0 +1,25 @@
+From: john spurling <john.spurling@reddit.com>
+Date: Tue, 5 Jul 2016 00:53:37 +0000
+Subject: add back -pthread; remove --whole-archive
+
+---
+ mcrouter/configure.ac | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mcrouter/configure.ac b/mcrouter/configure.ac
+index 427f8a4..28e7266 100644
+--- a/mcrouter/configure.ac
++++ b/mcrouter/configure.ac
+@@ -157,10 +157,10 @@ AC_CHECK_FUNCS([gettimeofday \
+                 dup2 \
+                 ftruncate])
+ 
+-STATIC_LIBS="-Wl,--whole-archive  $STATIC_LIB_DIR/libfolly.a $STATIC_LIB_DIR/libthriftprotocol.a  -Wl,--no-whole-archive"
++STATIC_LIBS="$STATIC_LIB_DIR/libfolly.a $STATIC_LIB_DIR/libthriftprotocol.a"
+ LIBS="$STATIC_LIBS $LIBS $BOOST_LDFLAGS $BOOST_CONTEXT_LIB $BOOST_FILESYSTEM_LIB \
+       $BOOST_PROGRAM_OPTIONS_LIB $BOOST_SYSTEM_LIB $BOOST_REGEX_LIB \
+-      -lpthread -liberty"
++      -lpthread -pthread -liberty"
+ 
+ AM_PATH_PYTHON([2.6],, [:])
+ AM_CONDITIONAL([HAVE_PYTHON], [test "$PYTHON" != :])
