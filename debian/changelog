@@ -1,3 +1,21 @@
+mcrouter (0.22.0-0reddit1ubuntu5) trusty; urgency=medium
+
+  * Refresh patches.
+
+ -- Ricky Ramirez <vagrant@reddit.local>  Tue, 10 May 2016 20:35:44 +0000
+
+mcrouter (0.22.0-0reddit1ubuntu4) trusty; urgency=medium
+
+  * Refresh patches.
+
+ -- Ricky Ramirez <vagrant@reddit.local>  Tue, 10 May 2016 20:27:58 +0000
+
+mcrouter (0.22.0-0reddit1ubuntu3) trusty; urgency=medium
+
+  * Remove make from debian/control.
+
+ -- Ricky Ramirez <vagrant@reddit.local>  Tue, 10 May 2016 20:18:36 +0000
+
 mcrouter (0.22.0-0reddit1ubuntu2) trusty; urgency=medium
 
   * Make buildall.sh executable.
