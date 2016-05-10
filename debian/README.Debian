@@ -1,38 +1,188 @@
-Building this package
-=====================
-This build process assumes you have cowbuilder and git-buildpackage.
+Ubuntu packaging overview
+=========================
 
-First you'll need to do some setup:
-```
-DISTRIBUTION=trusty cowbuilder --create --components "main universe"
-git clone https://github.com/reddit/mcrouter.git
+Goals:
+* Working package on Ubuntu
+* Shouldn't depend on other non-main/ppa packages
+
+Ubuntu packaging overview
+-------------------------
+
+There is a lot written about Debian/Ubuntu packaging; here's a little
+more that would have helped me when I first started working on this.
+
+It helps to know that the Debian packaging tools are quite old, so
+much of the process of creating and maintaining a package is largely
+duplicating the information in a modern source code repository such as
+_git_, for lack of a better example.
+
+To upload source code to launchpad.net to be built, you need the
+following files.
+
+### an original source archive
+
+This is meant to be the original source archive that comes from the
+author of the code. It should be named something like this: `mcrouter_0.22.0.orig.tar.gz`
+
+### debian package info
+
+This is a bunch of files living in a subdirectory called `debian`. The
+exact details and requirements are outside the scope of this document,
+but the key files for our purposes are:
+
+* `debian/rules`: A makefile that tells the Debian packaging tools how
+  to build the package.
+* `debian/changelog`: A file that contains the packaging history and
+  version info. Its format is persnickety, and tools exist just to
+  maintain it.
+* `debian/control`: General package metadata such as build and install
+  dependencies, supported architectures, package description, etc.
+* `debian/patches/`: A directory containing patch files that the build
+  tools will apply to the original source archive.
+
+### changes file
+
+The `changes` file is a generated file that contains various metadata
+(e.g. version, Ubuntu distro, and cryptographic signatures) used to
+upload the file to launchpad.net.
+
+Ubuntu Mcrouter Bildungsroman
+-----------------------------
+
+Nominally, you can build Mcrouter using autotools and make, but the
+reality is trickier. It depends on two additional libraries from
+Facebook -- fbthrift and folly -- and one from Google --
+googletest. Facebook is pretty lazy about specifying what versions of
+these Mcrouter depends on. For the Facebook libraries, they just write
+the git commit number they build against in the files
+`mcrouter/FBTHRIFT_COMMIT` and `mcrouter/FOLLY_COMMIT`. For the
+googletest library, they just build against the latest version.
+
+There's a shell script they provide which does the work of pulling
+these three libraries down from `github.com` and building them:
+`mcrouter/scripts/install_ubuntu_14.04.sh`. I repurposed this script
+to automate the build on launchpad.
+
+Normally, the build script would `git clone` the correct versions of
+these libraries and build them. I used _git submodules_ to pin the
+required versions of the libraries into the repo. These changes are
+represented in the _original source archive_ mentioned in the previous
+section.
+
+To ensure that we don't run into versioning conflicts, I changed
+`mcrouter/configure.ac` to link statically against folly and
+fbthrift. These changes are represented in `debian/patches` mentioned
+in the previous section.
+
+
+Branch contents
+---------------
+
+* `upstream`: purely changes that come from Facebook.
+* `upstream_with_submodules`: Facebook commits plus submodule
+  dependencies. The _original source archive_ is generated from this
+  branch.
+* `ubuntu/trusty`: Facebook commits, submodule dependencies, and the
+  `debian` packaging directory. This branch *must not* contain git
+  commits that change the upstream Facebook code; however, these
+  changes _are_ stored as patches in the `debian/patches` directory.
+* `patch-queue/ubuntu/trusty`: Facebook commits, submodule
+  dependencies, the `debian` packaging directory, and changes to the
+  mcrouter build system. The patches in `debian/patches` are generated
+  from this branch but stored in the `ubuntu/trusty` branch.
+
+Updating to a new version
+-------------------------
+
+### update upstream branches
+* `git remote add fb_upstream https://github.com/facebook/mcrouter.git` # if you haven't already
+* `git checkout upstream`
+* `git rebase fb_upstream/release-XX-X` # where XX-X is the new version number
+* `git checkout upstream_with_submodules`
+* `git rebase upstream`
+* `cd build/pkgs/folly`
+* `git checkout \`cat ../../../mcrouter/FOLLY_COMMIT\``
+* git add and commit submodule files
+* `cd ../fbthrift`
+* `git checkout \`cat ../../../mcrouter/FBTHRIFT_COMMIT\``
+* git add and commit submodule files
+
+### generate orig tarball
+* `cd ../../..`
+* generate orig tarball: `git-archive-all.sh -- - | xz >../mcrouter_0.XX.X.orig.tar.xz`
+
+### update ubuntu/trusty branch
+* `git checkout ubuntu/trusty`
+* `git rebase upstream_with_submodules`
+* `dch -i`
+* this will throw you into an editor (it honors your $EDITOR) to
+  change `debian/changes`; update the file, mimicing the format that's
+  there
+* git commit `debian/changes`
+* check `mcrouter/scripts` for build dependency changes and update/git
+  commit `debian/control` as necessary
+
+### update our changes to mcrouter code (build system or whatever else)
+* `git-pq switch`
+* make any additional changes to the mcrouter codebase that you need
+* `git-pq export` # this generates the patches in `debian/patches` and
+  dumps you back in the `ubuntu/trusty` branch
+* `git add debian/patches` 
+* `git commit`
+
+### build the .changes file
+* `debuild -S -k$MYPGPKEYID` # you'll need a pgp key id and associate
+  it with your launchpad acct -- outside the scope of this document
+
+### upload to launchpad
+* create a launchpad account
+* associate your pgp public key with your account
+* create a test package to upload to
+* upload it to launchpad: `dput ppa:LAUNCHPAD_USERNAME/mcrouter mcrouter*changes` # assumes there's only one
+
+Literally how this was done
+---------------------------
+
+Here are the commands used to put this together, for posterity:
+
+```bash
+git clone https://github.com/reddit/mcrouter.git mcrouter
+git remote add fb_upstream http://github.com/facebook/mcrouter.git
+git fetch fb_upstream
+git rebase fb_upstream/release-22-0
+git fork upstream_with_submodules
+mkdir -p build/pkgs
+git submodule add https://github.com/facebook/folly.git build/pkgs/folly
+cd build/pkgs/folly
+git co `cat ../../../mcrouter/FOLLY_COMMIT`
+cd ../../..
+git add .gitmodules build/pkgs/folly
+git commit -m "Add folly submodule"
+# and fbthrift and googletest
+
+# make upstream orig tarball
+git-archive-all.sh -- - | xz >../mcrouter_0.22.0.orig.tar.xz
+
+git co ubuntu/trusty
+git rebase upstream_with_submodules
+
+# make changes to debian dir
+
+git-pq switch
+
+# make changes to build system (configure.ac and buildall.sh) and commit them
+
+git-pq export
+
+# nb: back on ubuntu/trusty branch
+git add debian/patches
+git commit -m "refresh patches"
+
+# build ubuntu files
+debuild -S -kDBE3EF93
+
+# upload stuff
+dput ppa:synec/mcrouter mcrouter_0.22.0-0reddit1.changes
 ```
 
-If you already have the repo from a previous build, make sure it's up to date:
-```
-git checkout upstream
-git pull
-```
 
-Make a new release:
-```
-export RELEASE=0.10.0  # Replace this with the release number
-git checkout ubuntu/trusty
-git merge v$RELEASE
-dch -v $RELEASE-0reddit1
-# Update the control and install files; make any packaging changes necessary
-git commit -va -m 'Package release v$RELEASE'
-gbp buildpackage --git-pristine-tar --git-pristine-tar-commit --git-upstream-tag='v%(version)s' --git-pbuilder --git-dist=trusty --git-debian-branch=ubuntu/trusty
-```
-
-Test that the new package works. Once you're done, make a pull request.
-
-Push the final package out to the repo. To build a source package, you'll need
-to get the orig.tar.gz:
-```
-git checkout pristine-tar
-pristine-tar checkout mcrouter_$RELEASE.orig.tar.gz
-mv mcrouter_$RELEASE.orig.tar.gz ..
-git checkout ubuntu/trusty
-debuild -S
-```
