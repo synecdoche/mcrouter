@@ -1,0 +1,3 @@
+[submodule "build/pkgs/folly"]
+	path = build/pkgs/folly
+	url = https://github.com/facebook/folly.git
