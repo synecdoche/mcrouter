@@ -1,2 +1,3 @@
 0001-Change-mcrouter-configure.ac-to-link-statically-agai.patch
 0002-Add-buildall.sh.patch
+0003-Make-buildall.sh-executable.patch

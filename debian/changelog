@@ -1,3 +1,15 @@
+mcrouter (0.22.0-0reddit1ubuntu2) trusty; urgency=medium
+
+  * Make buildall.sh executable.
+
+ -- Ricky Ramirez <vagrant@reddit.local>  Tue, 10 May 2016 20:12:13 +0000
+
+mcrouter (0.22.0-0reddit1ubuntu1) trusty; urgency=medium
+
+  * Remove version number requirement for make in debian/control.
+
+ -- Ricky Ramirez <vagrant@reddit.local>  Tue, 10 May 2016 20:02:21 +0000
+
 mcrouter (0.22.0-0reddit1) trusty; urgency=medium
 
   * New upstream release.
