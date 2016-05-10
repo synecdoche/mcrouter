@@ -2,44 +2,44 @@ mcrouter (0.22.0-0reddit1ubuntu6) trusty; urgency=medium
 
   * Make debian/rules make buildall.sh executable.
 
- -- Ricky Ramirez <vagrant@reddit.local>  Tue, 10 May 2016 20:42:34 +0000
+ -- john spurling <john.spurling@reddit.com>  Tue, 10 May 2016 20:42:34 +0000
 
 mcrouter (0.22.0-0reddit1ubuntu5) trusty; urgency=medium
 
   * Refresh patches.
 
- -- Ricky Ramirez <vagrant@reddit.local>  Tue, 10 May 2016 20:35:44 +0000
+ -- john spurling <john.spurling@reddit.com>  Tue, 10 May 2016 20:35:44 +0000
 
 mcrouter (0.22.0-0reddit1ubuntu4) trusty; urgency=medium
 
   * Refresh patches.
 
- -- Ricky Ramirez <vagrant@reddit.local>  Tue, 10 May 2016 20:27:58 +0000
+ -- john spurling <john.spurling@reddit.com>  Tue, 10 May 2016 20:27:58 +0000
 
 mcrouter (0.22.0-0reddit1ubuntu3) trusty; urgency=medium
 
   * Remove make from debian/control.
 
- -- Ricky Ramirez <vagrant@reddit.local>  Tue, 10 May 2016 20:18:36 +0000
+ -- john spurling <john.spurling@reddit.com>  Tue, 10 May 2016 20:18:36 +0000
 
 mcrouter (0.22.0-0reddit1ubuntu2) trusty; urgency=medium
 
   * Make buildall.sh executable.
 
- -- Ricky Ramirez <vagrant@reddit.local>  Tue, 10 May 2016 20:12:13 +0000
+ -- john spurling <john.spurling@reddit.com>  Tue, 10 May 2016 20:12:13 +0000
 
 mcrouter (0.22.0-0reddit1ubuntu1) trusty; urgency=medium
 
   * Remove version number requirement for make in debian/control.
 
- -- Ricky Ramirez <vagrant@reddit.local>  Tue, 10 May 2016 20:02:21 +0000
+ -- john spurling <john.spurling@reddit.com>  Tue, 10 May 2016 20:02:21 +0000
 
 mcrouter (0.22.0-0reddit1) trusty; urgency=medium
 
   * New upstream release.
   * Link statically against libthriftprotocol and libfolly.
 
- -- Ricky Ramirez <vagrant@reddit.local>  Tue, 10 May 2016 19:24:23 +0000
+ -- john spurling <john.spurling@reddit.com>  Tue, 10 May 2016 19:24:23 +0000
 
 mcrouter (0.10.0-0reddit2) trusty; urgency=medium
 
