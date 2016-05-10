@@ -1,0 +1,155 @@
+From: john spurling <john.spurling@reddit.com>
+Date: Tue, 10 May 2016 19:33:09 +0000
+Subject: Add buildall.sh
+
+---
+ buildall.sh | 140 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 140 insertions(+)
+ create mode 100644 buildall.sh
+
+diff --git a/buildall.sh b/buildall.sh
+new file mode 100644
+index 0000000..528e265
+--- /dev/null
++++ b/buildall.sh
+@@ -0,0 +1,140 @@
++#!/bin/bash
++
++REPO_BASE_DIR=`pwd`
++MCROUTER_DIR=$REPO_BASE_DIR/mcrouter
++BUILDROOT=$REPO_BASE_DIR/build
++PKG_DIR=$BUILDROOT/pkgs
++INSTALL_DIR=$BUILDROOT/install
++INSTALL_AUX_DIR=$INSTALL_DIR/aux
++
++if [ ! -d $PKG_DIR ]; then
++    mkdir -p $PKG_DIR
++fi
++
++if [[ ! -d $INSTALL_AUX_DIR ]]; then
++    mkdir -p $INSTALL_AUX_DIR
++fi
++
++export LDFLAGS="-ljemalloc $LDFLAGS"
++
++### build folly
++
++# requires: libdouble-conversion-dev
++
++cd "$PKG_DIR" || die "cd $PKG_DIR fail"
++
++if [[ ! -d folly ]]; then
++    die "folly source dir missing"
++fi
++
++# clone folly into $PKG_DIR
++# if [[ ! -d folly ]]; then
++#   git clone https://github.com/facebook/folly
++#   cd "$PKG_DIR/folly" || die "cd fail"
++#   if [[ -f "$REPO_BASE_DIR/mcrouter/FOLLY_COMMIT" ]]; then
++#     FOLLY_COMMIT="$(head -n 1 "$REPO_BASE_DIR/mcrouter/FOLLY_COMMIT")"
++#     echo "FOLLY_COMMIT file found: using folly commit $FOLLY_COMMIT"
++#     git checkout "$FOLLY_COMMIT"
++#   else
++#     echo "No FOLLY_COMMIT file, using folly HEAD=$(git rev-parse HEAD)"
++#   fi
++# fi
++
++# build folly if no libfolly.a
++if [[ ! -f $INSTALL_DIR/lib/libfolly.a ]]; then
++    cd "$PKG_DIR/folly/folly" || die "cd $PKG_DIR/folly/folly failed"
++
++    autoreconf --install
++    LD_LIBRARY_PATH="$INSTALL_DIR/lib:$LD_LIBRARY_PATH" \
++	LD_RUN_PATH="$INSTALL_DIR/lib:$LD_RUN_PATH" \
++	./configure --prefix="$INSTALL_DIR"  && \
++	make $MAKE_ARGS && make install $MAKE_ARGS
++else
++    echo "$INSTALL_DIR/lib/libfolly.a present. skipping..."
++fi
++
++if [[ ! -f $INSTALL_DIR/lib/libfolly.a ]]; then
++    echo "libfolly.a STILL not present. aborting."
++    exit
++fi
++
++
++### build fbthrift
++
++LDFLAGS="-ljemalloc $LDFLAGS"
++##unset LD_LIBRARY_PATH
++##unset LD_RUN_PATH
++
++cd "$PKG_DIR" || die "cd $PKG_DIR fail"
++
++# clone fbthrift into $PKG_DIR
++if [[ ! -d "$PKG_DIR/fbthrift" ]]; then
++    die "missing fbthrift source dir"
++fi
++
++# if [[ ! -d "$PKG_DIR/fbthrift" ]]; then
++#   git clone https://github.com/facebook/fbthrift
++#   cd "$PKG_DIR/fbthrift" || die "cd fail"
++#   if [[ -f "$REPO_BASE_DIR/mcrouter/FBTHRIFT_COMMIT" ]]; then
++#     FBTHRIFT_COMMIT="$(head -n 1 "$REPO_BASE_DIR/mcrouter/FBTHRIFT_COMMIT")"
++#     echo "FBTHRIFT_COMMIT file found: using fbthrift commit $FBTHRIFT_COMMIT"
++#     git checkout "$FBTHRIFT_COMMIT"
++#   else
++#     echo "No FBTHRIFT_COMMIT file, using fbthrift HEAD=$(git rev-parse HEAD)"
++#   fi
++# fi
++
++cd "$PKG_DIR/fbthrift/thrift" || die "cd fbthrift failed"
++
++if [[ ! -f "$INSTALL_DIR/lib/libthriftprotocol.a" ]]; then
++    autoreconf --install
++    LD_LIBRARY_PATH="$INSTALL_DIR/lib:$LD_LIBRARY_PATH" \
++	LD_RUN_PATH="$INSTALL_DIR/lib:$LD_RUN_PATH" \
++	./configure --prefix="$INSTALL_DIR"  --bindir="$INSTALL_AUX_DIR/bin" \
++        PY_PREFIX="$INSTALL_AUX_DIR" \
++        PY_INSTALL_HOME="$INSTALL_AUX_DIR" \
++        --without-cpp --with-folly="$INSTALL_DIR" && \
++	make $MAKE_ARGS && make install $MAKE_ARGS
++else
++    echo "$INSTALL_DIR/lib/libthriftprotocol.a present. skipping..."
++fi
++
++
++### build mcrouter
++
++LDFLAGS="-ljemalloc $LDFLAGS"
++##unset LD_LIBRARY_PATH
++##unset LD_RUN_PATH
++
++cd "$PKG_DIR" || die "cd $PKG_DIR fail"
++
++# clone googletest into $PKG_DIR
++cd "$MCROUTER_DIR" || die "cd $MCROUTER_DIR failed"
++
++if [[ ! -d lib/gtest ]]; then
++    mkdir -p lib/gtest
++    cp -r -f -t ./lib/gtest "$PKG_DIR/googletest/googletest"/*
++fi
++
++# build mcrouter
++if [[ ! -f "$MCROUTER_DIR/mcrouter" ]]; then
++    THRIFT2_COMPILER=$(readlink -f \
++	"$(find "$INSTALL_AUX_DIR" | grep -m 1 'thrift_compiler/main\.py$')")
++
++    test "x$THRIFT2_COMPILER" != "x" || die "Couldn't find fbthrift cpp2 compiler"
++
++    THRIFT2_COMP_DIR="$(dirname "$THRIFT2_COMPILER")"
++
++    autoreconf --install
++    LD_LIBRARY_PATH="$INSTALL_DIR/lib:$LD_LIBRARY_PATH" \
++	LD_RUN_PATH="$INSTALL_DIR/lib:$LD_RUN_PATH" \
++	LDFLAGS="-L$INSTALL_DIR/lib $LDFLAGS" \
++	CPPFLAGS="-I$INSTALL_DIR/include $CPPFLAGS" \
++	STATIC_LIB_DIR="$INSTALL_DIR/lib" \
++	./configure --prefix=/usr THRIFT2_COMP_DIR="$THRIFT2_COMP_DIR"
++    make $MAKE_ARGS
++else
++    echo "$MCROUTER_DIR/mcrouter present. skipping."
++fi
++
++
