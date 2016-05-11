@@ -97,9 +97,9 @@ Updating to a new version
 ### update upstream branches
 * `git remote add fb_upstream https://github.com/facebook/mcrouter.git` # if you haven't already
 * `git checkout upstream`
-* `git rebase fb_upstream/release-XX-X` # where XX-X is the new version number
+* `git rebase -s recursive -X ours fb_upstream/release-XX-X` # where XX-X is the new version number
 * `git checkout upstream_with_submodules`
-* `git rebase upstream`
+* `git rebase -s recursive -X ours upstream`
 * `cd build/pkgs/folly`
 * `git checkout \`cat ../../../mcrouter/FOLLY_COMMIT\``
 * git add and commit submodule files
