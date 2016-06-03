@@ -1,0 +1,9 @@
+[submodule "build/pkgs/folly"]
+	path = build/pkgs/folly
+	url = https://github.com/facebook/folly.git
+[submodule "build/pkgs/fbthrift"]
+	path = build/pkgs/fbthrift
+	url = https://github.com/facebook/fbthrift.git
+[submodule "build/pkgs/googletest"]
+	path = build/pkgs/googletest
+	url = https://github.com/google/googletest.git

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -e
+
+case "$1" in
+  remove)
+    ;;
+  purge)
+    rm -rf /var/spool/mcrouter
+    deluser --system Debian-mcrouter || true
+    ;;
+esac
+
+#DEBHELPER#

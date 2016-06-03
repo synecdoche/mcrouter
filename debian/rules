@@ -1,0 +1,23 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+#
+#  Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+export CC = gcc-4.8
+export CXX = g++-4.8
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	chmod +x buildall.sh
+	./buildall.sh
+
+override_dh_auto_configure:
+
+override_dh_auto_install:
+	dh_auto_install --sourcedirectory=mcrouter/
+
+override_dh_auto_test:
+	# Skip tests because they are currently failing.

@@ -1,0 +1,3 @@
+# Set to any value to enable mcrouter. Set to empty string to disable.
+ENABLED=
+MCROUTER_FLAGS="-f /etc/mcrouter.conf -L /var/log/mcrouter/mcrouter.log -p 11212"
